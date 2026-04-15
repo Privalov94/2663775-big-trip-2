@@ -1,5 +1,6 @@
-import { createElement } from '../render.js';
+// import { createElement } from '../render.js';
 import { formatDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createEditPointTemplate(point, destination, allDestinations, allTypes, offersByType) {
   return (
@@ -92,8 +93,9 @@ function createEditPointTemplate(point, destination, allDestinations, allTypes, 
   );
 }
 
-export default class EditPointView {
+export default class EditPointView extends AbstractView {
   constructor(point, destination, allDestinations, allTypes, offersByType) {
+    super();
     this.point = point;
     this.destination = destination;
     this.allDestinations = allDestinations;
@@ -101,19 +103,23 @@ export default class EditPointView {
     this.offersByType = offersByType;
   }
 
-  getTemplate() {
+  init({oneCancelClick}) {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', oneCancelClick);
+  }
+
+  get template() {
     return createEditPointTemplate(this.point, this.destination, this.allDestinations, this.allTypes, this.offersByType);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  // getElement() {
+  //   if (!this.element) {
+  //     this.element = createElement(this.getTemplate());
+  //   }
 
-    return this.element;
-  }
+  //   return this.element;
+  // }
 
-  removeElement() {
-    this.element = null;
-  }
+  // removeElement() {
+  //   this.element = null;
+  // }
 }
