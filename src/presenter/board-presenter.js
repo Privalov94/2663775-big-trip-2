@@ -4,8 +4,11 @@ import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 // import AddNewPointView from '../view/add-new-point-view.js';
 import { render, replace } from '../framework/render.js';
+import MessageView from '../view/message-view.js';
 
 export default class BoardPresenter {
+  messageComponent = new MessageView;
+
   constructor({ boardContainer, pointsModel }) {
     this.boardContainer = boardContainer;
     this.pointsModel = pointsModel;
@@ -60,8 +63,12 @@ export default class BoardPresenter {
     render(this.boardComponent, this.boardContainer);
     // render(new AddNewPointView(), listElement);
 
-    for (let i = 0; i < this.points.length; i++) {
-      this.#renderPoint(this.points[i]);
+    if (this.points.length === 0) {
+      render(this.messageComponent, this.boardContainer);
+    } else {
+      for (let i = 0; i < this.points.length; i++) {
+        this.#renderPoint(this.points[i]);
+      }
     }
   }
 }
