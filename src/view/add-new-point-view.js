@@ -1,4 +1,5 @@
-import { createElement } from '../render.js';
+// import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createAddNewPointTemplate() {
   return (
@@ -167,20 +168,20 @@ function createAddNewPointTemplate() {
   );
 }
 
-export default class AddNewPointView {
-  getTemplate() {
+export default class AddNewPointView extends AbstractView {
+  get template() {
     return createAddNewPointTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  // getElement() {
+  //   if (!this.element) {
+  //     this.element = createElement(this.getTemplate());
+  //   }
 
-    return this.element;
-  }
+  //   return this.element;
+  // }
 
-  removeElement() {
-    this.element = null;
-  }
+  // removeElement() {
+  //   this.element = null;
+  // }
 }
