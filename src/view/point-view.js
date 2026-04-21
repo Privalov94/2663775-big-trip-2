@@ -58,8 +58,9 @@ export default class PointView extends AbstractView {
     this.offers = offers;
   }
 
-  init({onEditClick}) {
+  init({onEditClick, onFavoriteClick}) {
     this.element.addEventListener('click', onEditClick);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', onFavoriteClick);
   }
 
   get template() {
