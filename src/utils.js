@@ -26,4 +26,8 @@ function getDuraction(dateFrom, dateTo) {
   return dayjs.duration(difference).format(format);
 }
 
-export { formatDate, getDuraction };
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export { formatDate, getDuraction, updateItem };
