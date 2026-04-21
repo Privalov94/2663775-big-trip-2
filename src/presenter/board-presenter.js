@@ -6,7 +6,8 @@ import EditPointView from '../view/edit-point-view.js';
 import { render } from '../framework/render.js';
 import MessageView from '../view/message-view.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils.js';
+import { updateItem, sortPointsByPrice, sortPointsByDay, sortPointsByDuration } from '../utils.js';
+import { SortType } from '../const.js';
 
 export default class BoardPresenter {
   #listPoint = new BoardView;
@@ -14,7 +15,8 @@ export default class BoardPresenter {
   pointComponent = new PointView();
   editPointComponent = new EditPointView();
   #pointPresenters = new Map();
-
+  #sortComponent = null;
+  #currentSortType = SortType.DEFAULT;
 
   constructor({ boardContainer, pointsModel }) {
     this.boardContainer = boardContainer;
@@ -23,8 +25,40 @@ export default class BoardPresenter {
 
   init() {
     this.points = this.pointsModel.getPoints().slice();
-    render(new SortView(), this.boardContainer);
+    this.#renderSort();
+    render(this.#listPoint, this.boardContainer);
     this.#renderPointList();
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#currentSortType = sortType;
+
+    if (sortType === SortType.PRICE) {
+      this.points = this.pointsModel.getPoints().slice().sort(sortPointsByPrice);
+    }
+
+    if (sortType === SortType.TIME) {
+      this.points = this.pointsModel.getPoints().slice().sort(sortPointsByDuration);
+    }
+
+    if (sortType === SortType.DEFAULT) {
+      this.points = this.pointsModel.getPoints().slice().sort(sortPointsByDay);
+    }
+
+    this.#clearPointList();
+    this.#renderPointList();
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
+
+  #renderSort() {
+    this.#sortComponent = new SortView();
+    render(this.#sortComponent, this.boardContainer);
+    this.#sortComponent.init(this.#handleSortTypeChange);
   }
 
   #handleModeChange = () => {
@@ -37,9 +71,7 @@ export default class BoardPresenter {
   };
 
   #renderPointList() {
-    render(this.#listPoint, this.boardContainer);
     // render(new AddNewPointView(), listElement);
-
     if (this.points.length === 0) {
       render(this.messageComponent, this.boardContainer);
     } else {

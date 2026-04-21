@@ -30,4 +30,18 @@ function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
 
-export { formatDate, getDuraction, updateItem };
+function sortPointsByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
+}
+
+function sortPointsByDay(pointA, pointB) {
+  return dayjs(pointA.dateFrom) - dayjs(pointB.dateFrom);
+}
+
+function sortPointsByDuration(pointA, pointB) {
+  const differencePointA = dayjs(pointA.dateTo).diff(pointA.dateFrom);
+  const differencePointB = dayjs(pointB.dateTo).diff(pointB.dateFrom);
+  return differencePointB - differencePointA;
+}
+
+export { formatDate, getDuraction, updateItem, sortPointsByPrice, sortPointsByDay, sortPointsByDuration };
