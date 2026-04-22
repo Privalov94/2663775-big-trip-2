@@ -37,13 +37,17 @@ export default class PointPresenter {
     const allTypes = this.#pointsModel.getOffers().map((item) => item.type);
     const offersByType = this.#pointsModel.getOffersByType(this.#point.type).offers;
 
+    const getOffersbyType = (type) => this.#pointsModel.getOffersByType(type).offers;
+    const getDestinationByName = (name) => this.#pointsModel.getDestinationByName(name);
+    const getDestinationById = (id) => this.#pointsModel.getDestinationById(id);
+
     this.#pointComponent = new PointView(this.#point, destination, offers);
 
     this.#pointComponent.init({
       onEditClick: () => {
         this.#replacePointToForm();
       },
-      onFavoriteClick: () => this.#handleFavoriteClick()
+      onFavoriteClick: () => this.#handleFavoriteClick(),
     });
 
     this.#pointEditComponent = new EditPointView(this.#point, destination, allDestinations, allTypes, offersByType);
@@ -51,7 +55,10 @@ export default class PointPresenter {
     this.#pointEditComponent.init({
       oneCancelClick: () => {
         this.#replaceFormToPoint();
-      }
+      },
+      getOffersbyType,
+      getDestinationByName,
+      getDestinationById
     });
 
     render(this.#pointComponent, this.#listPoint.element);
