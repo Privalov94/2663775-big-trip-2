@@ -1,6 +1,7 @@
 // import { createElement } from '../render.js';
 import { formatDate } from '../utils.js';
-import AbstractView from '../framework/view/abstract-view.js';
+// import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 function createEditPointTemplate(point, destination, allDestinations, allTypes, offersByType) {
   return (
@@ -93,9 +94,15 @@ function createEditPointTemplate(point, destination, allDestinations, allTypes, 
   );
 }
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
+  #getOffersbyType = null;
+  #getDestinationByName = null;
+  #getDestinationById = null;
+  #onCancelClick = null;
+
   constructor(point, destination, allDestinations, allTypes, offersByType) {
     super();
+    this._setState(point);
     this.point = point;
     this.destination = destination;
     this.allDestinations = allDestinations;
@@ -103,23 +110,45 @@ export default class EditPointView extends AbstractView {
     this.offersByType = offersByType;
   }
 
-  init({oneCancelClick}) {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', oneCancelClick);
+  init({ oneCancelClick, getOffersbyType, getDestinationByName, getDestinationById }) {
+    this.#getOffersbyType = getOffersbyType;
+    this.#getDestinationByName = getDestinationByName;
+    this.#getDestinationById = getDestinationById;
+    this.#onCancelClick = oneCancelClick;
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.point, this.destination, this.allDestinations, this.allTypes, this.offersByType);
+    return createEditPointTemplate(this._state, this.destination, this.allDestinations, this.allTypes, this.offersByType);
   }
 
-  // getElement() {
-  //   if (!this.element) {
-  //     this.element = createElement(this.getTemplate());
-  //   }
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#cancelEditHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typePointHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationPointHandler);
+  }
 
-  //   return this.element;
-  // }
+  #typePointHandler = (evt) => {
+    this.offersByType = this.#getOffersbyType(evt.target.value);
+    this.updateElement({
+      type: evt.target.value,
+      offers: []
+    });
+  };
 
-  // removeElement() {
-  //   this.element = null;
-  // }
+  #destinationPointHandler = (evt) => {
+    this.destination = this.#getDestinationByName(evt.target.value);
+    if (this.destination) {
+      this.updateElement({
+        destination: this.destination.id,
+      });
+    }
+  };
+
+  #cancelEditHandler = () => {
+    this.offersByType = this.#getOffersbyType(this.point.type);
+    this.destination = this.#getDestinationById(this.point.destination);
+    this.updateElement(this.point);
+    this.#onCancelClick();
+  };
 }
