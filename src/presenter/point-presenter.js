@@ -56,6 +56,7 @@ export default class PointPresenter {
       oneCancelClick: () => {
         this.#replaceFormToPoint();
       },
+      onSubmit: (updatedPoint) => this.#handleSubmit(updatedPoint),
       getOffersbyType,
       getDestinationByName,
       getDestinationById
@@ -95,6 +96,11 @@ export default class PointPresenter {
 
   #handleFavoriteClick() {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
+  }
+
+  #handleSubmit(point) {
+    this.#handleDataChange(point);
+    this.#replaceFormToPoint();
   }
 
   #replacePointToForm() {

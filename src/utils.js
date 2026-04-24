@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 dayjs.extend(duration);
 
 const MONTH_DAY_FORMAT = 'MMM DD';
@@ -27,7 +32,8 @@ function getDuraction(dateFrom, dateTo) {
 }
 
 function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
+  const point = { ...update, dateFrom: formatDate(update.dateFrom, 'YYYY-MM-DDTHH:mm:ss'), dateTo: formatDate(update.dateTo, 'YYYY-MM-DDTHH:mm:ss')};
+  return items.map((item) => item.id === update.id ? point : item);
 }
 
 function sortPointsByPrice(pointA, pointB) {
